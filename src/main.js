@@ -8,14 +8,22 @@ const data = {
     sortOrder: 'DESC',
 };
 
+const editHandler = () => {
+
+};
+
+const deleteHandler = () => {
+
+};
+
 const renderTableHead = () => {
     const tableHead = $('#tableHead');
-    
+
     $(tableHead).append(
         $('<tr>'),
-        $($('<th>').text('Name')),
-        $($('<th>').text('Count')),
-        $($('<th>').text('Price'))
+        $('<th>').text('Name'),
+        $('<th>').text('Price'),
+        $('<th>').text('Actions')
     );
 };
 
@@ -27,10 +35,14 @@ const renderTableBody = () => {
             $(tableBody).append(
                 $('<tr>'),
                 $('<td>').text(product.name),
-                $('<td>').text(Number(product.count)),
-                $('<td>').text(Number(product.price))
+                $('<td>').text(Number(product.price)),
+                $('<td>').append(
+                    $('<button>').text('Edit').click(editHandler)
+                ),
+                $('<td>').append(
+                    $('<button>').text('Delete').click(deleteHandler))
+                )
             )
-        )
     )
 };
 
