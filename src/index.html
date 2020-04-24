@@ -2,17 +2,18 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>jQery table</title>
+    <title>jQuery table</title>
+    <link rel="stylesheet" href="./bootstrap.css">
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-    <div>
-        <div>
-            <input type="text">
-            <input type="button" value="Search">
-            <input type="button" value="Add new">
+    <div class="container">
+        <div class="d-flex justify-content-center my-3">
+            <input type="text" value="Enter product name..." class="form-control w-25">
+            <input type="button" value="Search" class="btn btn-outline-secondary mx-2">
+            <input type="button" value="Add new" class="btn btn-outline-secondary ml-auto">
         </div>
-        <table>
+        <table class="table table-bordered">
             <thead id="tableHead">
 
             </thead>

@@ -5,7 +5,7 @@ const data = {
         {name: 'Product3', count: 5, price: 300},
     ],
     sortBy: 'name',
-    sortOrder: 'desc',
+    sortOrder: 'asc',
 };
 
 const editHandler = () => {
@@ -37,27 +37,24 @@ const sortHandler = (event) => {
 const renderTableHead = () => {
     const tableHead = $('#tableHead');
 
-    const nameCol = $('<th>').append(
-        $('<a>')
-            .attr('href', '#')
-            .text('Name')
-            .click({column: 'name'}, sortHandler)
-    );
-    const priceCol = $('<th>').append(
-        $('<a>')
-            .attr('href', '#')
-            .text('Price')
-            .click({column: 'price'}, sortHandler)
-    );
-    const actionsCol = $('<th>').text('Actions');
-
     $(tableHead).empty();
     $(tableHead).append(
-        $('<tr>'),
-        $(nameCol),
-        $(priceCol),
-        $(actionsCol)
-    );
+        $('<tr>').append(
+            $('<th>').append(
+                $('<a>')
+                    .text('Name')
+                    .attr({'href': '#'})
+                    .click({column: 'name'}, sortHandler)
+            ),
+            priceCol = $('<th>').append(
+                $('<a>')
+                    .text('Price')
+                    .attr({'href': '#'})
+                    .click({column: 'price'}, sortHandler)
+            ),
+            actionsCol = $('<th>').text('Actions')
+        )
+    )
 };
 
 const renderTableBody = () => {
@@ -66,18 +63,27 @@ const renderTableBody = () => {
     const sortedProducts = _.orderBy(products, sortBy, sortOrder);
 
     $(tableBody).empty();
-    sortedProducts.forEach((product) => (
+    sortedProducts.forEach((product) => {
             $(tableBody).append(
                 $('<tr>'),
-                $('<td>').text(product.name),
-                $('<td>').text(Number(product.price)),
                 $('<td>').append(
-                    $('<button>').text('Edit').click(editHandler)
+                    $('<a>')
+                        .text(product.name)
+                        .attr({'href': '#'})
                 ),
-                $('<td>').append(
-                    $('<button>').text('Delete').click(deleteHandler))
+                $('<td>').text(Number(product.price)),
+                $('<td>').attr({'class': 'd-flex justify-content-around'}).append(
+                        $('<button>')
+                            .text('Edit')
+                            .attr({'class': 'btn btn-outline-secondary'})
+                            .click(editHandler),
+                        $('<button>')
+                            .text('Delete')
+                            .attr({'class': 'btn btn-outline-secondary'})
+                            .click(deleteHandler)
                 )
             )
+        }
     )
 };
 
