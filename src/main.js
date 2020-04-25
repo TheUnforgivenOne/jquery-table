@@ -1,11 +1,21 @@
 const data = {
-    products: [
-        {name: 'Product1', count: 1, price: 100},
-        {name: 'Product2', count: 18, price: 1200},
-        {name: 'Product3', count: 5, price: 300},
-    ],
+    products: [],
     sortBy: 'name',
     sortOrder: 'asc',
+};
+
+const loadProducts = () => {
+    const url = './products.json';
+
+    $.ajax({
+        type: 'GET',
+        url: url,
+        async: false,
+        success: (resp) => {
+            data.products = resp;
+            render();
+        }
+    });
 };
 
 const editHandler = () => {
@@ -46,13 +56,13 @@ const renderTableHead = () => {
                     .attr({'href': '#'})
                     .click({column: 'name'}, sortHandler)
             ),
-            priceCol = $('<th>').append(
+            $('<th>').append(
                 $('<a>')
                     .text('Price')
                     .attr({'href': '#'})
                     .click({column: 'price'}, sortHandler)
             ),
-            actionsCol = $('<th>').text('Actions')
+            $('<th>').text('Actions')
         )
     )
 };
@@ -92,4 +102,5 @@ const render = () => {
     renderTableBody();
 };
 
-render();
+loadProducts();
+// render();
