@@ -77,20 +77,27 @@ const renderTableBody = () => {
             $(tableBody).append(
                 $('<tr>'),
                 $('<td>').append(
-                    $('<a>')
-                        .text(product.name)
-                        .attr({'href': '#'})
+                    $('<div>')
+                        .attr({'class': 'd-flex justify-content-between'})
+                        .append(
+                        $('<a>')
+                            .text(product.name)
+                            .attr({'href': '#'}),
+                        $('<p>')
+                            .text(product.count)
+                            .attr({})
+                    )
                 ),
                 $('<td>').text(Number(product.price)),
                 $('<td>').attr({'class': 'd-flex justify-content-around'}).append(
-                        $('<button>')
-                            .text('Edit')
-                            .attr({'class': 'btn btn-outline-secondary'})
-                            .click(editHandler),
-                        $('<button>')
-                            .text('Delete')
-                            .attr({'class': 'btn btn-outline-secondary'})
-                            .click(deleteHandler)
+                    $('<button>')
+                        .text('Edit')
+                        .attr({'class': 'btn btn-outline-secondary'})
+                        .click(editHandler),
+                    $('<button>')
+                        .text('Delete')
+                        .attr({'class': 'btn btn-outline-secondary'})
+                        .click(deleteHandler)
                 )
             )
         }
