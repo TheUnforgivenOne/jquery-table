@@ -1,0 +1,32 @@
+.modalFade {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background:rgba(0,0,0,.7);
+}
+
+.modalDelete {
+    display: none;
+    position: absolute;
+    left: 50%;
+    margin-left: -25%;
+    margin-top: 20%;
+    width: 50%;
+    height: 30%;
+    background: #fff;
+    border: 2px solid #000;
+    text-align: center;
+}
+
+.modalHeader {
+    padding-top: 10px;;
+    font-size: 30px;
+}
+
+.modalBody {
+    font-size: 20px;
+    padding-top: 20px;
+}

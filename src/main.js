@@ -10,7 +10,6 @@ const loadProducts = () => {
     $.ajax({
         type: 'GET',
         url: url,
-        async: false,
         success: (resp) => {
             data.products = resp;
             render();
@@ -22,8 +21,21 @@ const editHandler = () => {
 
 };
 
-const deleteHandler = () => {
+const deleteHandler = (p) => {
+    const product = p.data.product;
 
+    console.log(product);
+    $('#modalDeleteBody').text('Are you sure you want to delete ' + product.name + '?');
+    $('#modalDelete, #modalFade').show();
+
+    $('#acceptDeletionButton').click(() => {
+        _.remove(data.products, product);
+        $('#modalDelete, #modalFade').hide();
+        render();
+    });
+    $('#rejectDeletionButton').click(() => {
+        $('#modalDelete, #modalFade').hide();
+    });
 };
 
 const toggleSortBy = () => {
@@ -97,7 +109,7 @@ const renderTableBody = () => {
                     $('<button>')
                         .text('Delete')
                         .attr({'class': 'btn btn-outline-secondary'})
-                        .click(deleteHandler)
+                        .click({product}, deleteHandler)
                 )
             )
         }

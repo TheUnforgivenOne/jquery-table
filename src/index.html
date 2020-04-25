@@ -8,6 +8,7 @@
 </head>
 <body>
     <div class="container">
+        <!-- Main page -->
         <div class="d-flex justify-content-center my-3">
             <input type="text" value="Enter product name..." class="form-control w-25">
             <input type="button" value="Search" class="btn btn-outline-secondary mx-2">
@@ -21,6 +22,19 @@
 
             </tbody>
         </table>
+        <!-- Modal delete window -->
+        <div id="modalFade" class="modalFade">
+            <div id="modalDelete" class="modalDelete">
+                <div class="modalHeader">Are you sure?</div>
+                <div id="modalDeleteBody" class="modalBody">
+
+                </div>
+                <div>
+                    <input type="button" value="Yes" id="acceptDeletionButton" class="btn btn-outline-primary">
+                    <input type="button" value="No" id="rejectDeletionButton" class="btn btn-outline-primary">
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="./jquery.js"></script>
