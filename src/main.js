@@ -31,7 +31,7 @@ const defaultProduct = {
 };
 
 const initEvents = () => {
-    $('#searchInput').unbind().on('keypress', (key => key.which === 13 ? searchHandler: null));
+    $('#searchInput').unbind().on('keypress', key => key.which === 13 ? searchHandler() : null);
     $('#searchButton').unbind().click(searchHandler);
     $('#addNewButton').unbind().click({ 'product': defaultProduct }, renderEditModal);
 };
@@ -70,6 +70,28 @@ const uniqueId = () => {
     return id;
 };
 
+const validateProduct = (product) => {
+    let valid = [];
+    valid.push(/^([a-zA-Z\s]){5,15}$/.test(product.name));
+    valid.push(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(product.email.toLowerCase()));
+    valid.push(product.count > 0);
+    valid.push(product.price > 0);
+
+    valid[0] === false ?
+        $('#productName').addClass('invalid') :
+        $('#productName').removeClass('invalid');
+    valid[1] === false ?
+        $('#supplierEmail').addClass('invalid') :
+        $('#supplierEmail').removeClass('invalid');
+    !valid[2] ?
+        $('#productCount').addClass('invalid') :
+        $('#productCount').removeClass('invalid');
+    !valid[3] ?
+        $('#productPrice').addClass('invalid') :
+        $('#productPrice').removeClass('invalid');
+    return valid.every((e) => e === true);
+};
+
 const editProduct = (event) => {
     let product;
     if (event.data.product.id == null) {
@@ -85,8 +107,10 @@ const editProduct = (event) => {
     product.count = $('#productCount').val();
     product.price = $('#productPrice').val();
 
-    $('#modalEdit, #modalFade').hide();
-    renderTableBody();
+    if (validateProduct(product)){
+        $('#modalEdit, #modalFade').hide();
+        renderTableBody();
+    }
 };
 
 const deleteProduct = (event) => {
@@ -270,5 +294,7 @@ const render = () => {
     renderTableBody();
 };
 
-loadProducts();
-initEvents();
+$(document).ready(() =>{
+    initEvents();
+    loadProducts();
+});
