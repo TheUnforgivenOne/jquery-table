@@ -25,13 +25,45 @@
         <!-- Modal delete window -->
         <div id="modalFade" class="modalFade">
             <div id="modalDelete" class="modalDelete">
-                <div class="modalHeader">Are you sure?</div>
+                <div class="modalHeader">Are you sure?<hr/></div>
                 <div id="modalDeleteBody" class="modalBody">
 
                 </div>
                 <div>
                     <input type="button" value="Yes" id="acceptDeletionButton" class="btn btn-outline-primary">
                     <input type="button" value="No" id="rejectDeletionButton" class="btn btn-outline-primary">
+                </div>
+            </div>
+            <div id="modalEdit" class="modalEdit">
+                <div id="modalEditHeader" class="modalHeader"></div><hr/>
+                <div class="modalEditBody">
+                    <div class="d-flex flex-column">
+                        <label for="productName">Name:</label>
+                        <input type="text" id="productName" class="w-50">
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label for="supplierEmail">Supplier email:</label>
+                        <input type="text" id="supplierEmail" class="w-50">
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label for="productCount">Count:</label>
+                        <input type="text" id="productCount" class="w-50">
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label for="productPrice">Price:</label>
+                        <input type="text" id="productPrice" class="w-50">
+                    </div>
+                    <span>Delivery:</span>
+                    <div class="d-flex">
+                        <select id="country" class="h-25">
+
+                        </select>
+                        <div id="cities" class="d-flex flex-column border ml-5 w-25">
+
+                        </div>
+                    </div>
+                    <input type="button" value="Save changes" id="acceptEdit" class="btn btn-outline-primary">
+                     <input type="button" value="Cancel" id="rejectEdit" class="btn btn-outline-primary">
                 </div>
             </div>
         </div>

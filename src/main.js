@@ -17,25 +17,24 @@ const loadProducts = () => {
     });
 };
 
-const editHandler = () => {
+const editProduct = (event) => {
+    const { product } = event.data;
 
+    product.name = $('#productName').val();
+    product.email = $('#supplierEmail').val();
+    product.count = $('#productCount').val();
+    product.price = $('#productPrice').val();
+
+    $('#modalEdit, #modalFade').hide();
+    renderTableBody();
 };
 
-const deleteHandler = (p) => {
-    const product = p.data.product;
+const deleteProduct = (event) => {
+    const { productId } = event.data;
 
-    console.log(product);
-    $('#modalDeleteBody').text('Are you sure you want to delete ' + product.name + '?');
-    $('#modalDelete, #modalFade').show();
-
-    $('#acceptDeletionButton').click(() => {
-        _.remove(data.products, product);
-        $('#modalDelete, #modalFade').hide();
-        render();
-    });
-    $('#rejectDeletionButton').click(() => {
-        $('#modalDelete, #modalFade').hide();
-    });
+    data.products.splice(data.products.findIndex(p => p.id === productId), 1);
+    $('#modalDelete, #modalFade').hide();
+    renderTableBody();
 };
 
 const toggleSortBy = () => {
@@ -65,14 +64,14 @@ const renderTableHead = () => {
             $('<th>').append(
                 $('<a>')
                     .text('Name')
-                    .attr({'href': '#'})
-                    .click({column: 'name'}, sortHandler)
+                    .attr({ 'href': '#' })
+                    .click({ 'column': 'name' }, sortHandler)
             ),
             $('<th>').append(
                 $('<a>')
                     .text('Price')
-                    .attr({'href': '#'})
-                    .click({column: 'price'}, sortHandler)
+                    .attr({ 'href': '#' })
+                    .click({ 'column': 'price' }, sortHandler)
             ),
             $('<th>').text('Actions')
         )
@@ -81,39 +80,108 @@ const renderTableHead = () => {
 
 const renderTableBody = () => {
     const tableBody = $('#tableBody');
-    const {products, sortBy, sortOrder} = data;
+    const { products, sortBy, sortOrder } = data;
     const sortedProducts = _.orderBy(products, sortBy, sortOrder);
 
     $(tableBody).empty();
     sortedProducts.forEach((product) => {
-            $(tableBody).append(
-                $('<tr>'),
-                $('<td>').append(
-                    $('<div>')
-                        .attr({'class': 'd-flex justify-content-between'})
-                        .append(
+        $(tableBody).append(
+            $('<tr>'),
+            $('<td>').append(
+                $('<div>')
+                    .attr({ 'class': 'd-flex justify-content-between' })
+                    .append(
                         $('<a>')
                             .text(product.name)
-                            .attr({'href': '#'}),
-                        $('<p>')
+                            .attr({ 'href': '#' })
+                            .click({ 'product': product }, renderEditModal),
+                        $('<span>')
                             .text(product.count)
                             .attr({})
                     )
-                ),
-                $('<td>').text(Number(product.price)),
-                $('<td>').attr({'class': 'd-flex justify-content-around'}).append(
+            ),
+            $('<td>').text(Number(product.price)),
+            $('<td>')
+                .attr({ 'class': 'd-flex justify-content-around' })
+                .append(
                     $('<button>')
                         .text('Edit')
-                        .attr({'class': 'btn btn-outline-secondary'})
-                        .click(editHandler),
+                        .attr({ 'class': 'btn btn-outline-secondary' })
+                        .click({ 'product': product }, renderEditModal),
                     $('<button>')
                         .text('Delete')
-                        .attr({'class': 'btn btn-outline-secondary'})
-                        .click({product}, deleteHandler)
+                        .attr({ 'class': 'btn btn-outline-secondary' })
+                        .click({ 'product': product }, renderDeleteModal)
                 )
             )
         }
     )
+};
+
+const renderCities = (event) => {
+    const { product } = event.data;
+    const selectedCountry = $('#country').val();
+    const cities = product.delivery[selectedCountry];
+
+    $('#cities').empty().append(
+        $('<div>').append(
+            $('<input>')
+                .attr({ 'type': 'checkbox', 'id': 'selectAll', 'class': 'm-1' }),
+            $('<label>')
+                .text('Select all')
+                .attr({ 'for': 'selectAll', 'class': 'm-1' })
+        )
+    );
+    for (city in cities) {
+        $('#cities').append(
+            $('<div>').append(
+                $('<input>')
+                    .attr({ 'type': 'checkbox', 'id': city, 'checked': cities[city], 'class': 'm-1' }),
+                $('<label>')
+                    .text(city)
+                    .attr({ 'for': city, 'class': 'm-1' })
+            )
+        )
+    }
+
+};
+
+const renderEditModal = (event) => {
+    const { product } = event.data;
+
+    $('#modalEditHeader').text(product.name);
+    $('#productName').val(product.name);
+    $('#supplierEmail').val(product.email);
+    $('#productCount').val(product.count);
+    $('#productPrice').val(product.price);
+    $('#country').empty().append(
+        $('<option>')
+            .text('Belarus')
+            .attr({ 'value': 'belarus' }),
+        $('<option>')
+            .text('Russia')
+            .attr({ 'value': 'russia', 'selected': 'selected' }),
+        $('<option>')
+            .text('USA')
+            .attr({ 'value': 'usa' }),
+    ).on('change', { 'product': product }, renderCities);
+    renderCities( { data: { 'product': product } }, $('#country').val());
+    $("#acceptEdit").unbind().click({ 'product': product }, editProduct);
+    $('#rejectEdit').unbind().click(() => {
+        $('#modalEdit, #modalFade').hide();
+    });
+    $('#modalEdit, #modalFade').show();
+};
+
+const renderDeleteModal = (event) => {
+    const { product } = event.data;
+
+    $('#modalDeleteBody').text('Are you sure you want to delete ' + product.name + '?');
+    $('#modalDelete, #modalFade').show();
+    $('#acceptDeletionButton').unbind().click({'productId': product.id}, deleteProduct);
+    $('#rejectDeletionButton').unbind().click(() => {
+        $('#modalDelete, #modalFade').hide();
+    });
 };
 
 const render = () => {
@@ -122,4 +190,3 @@ const render = () => {
 };
 
 loadProducts();
-// render();

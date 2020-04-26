@@ -7,68 +7,68 @@
       "price": 1234.56,
       "delivery": {
           "belarus": {
-              "borisov": false,
-              "brest": false,
-              "minsk": false
+              "Borisov": false,
+              "Brest": false,
+              "Minsk": false
           },
           "russia": {
-              "bryansk": true,
-              "moskow": true,
-              "saratov": true
+              "Bryansk": true,
+              "Moskow": true,
+              "Saratov": true
           },
           "usa": {
-              "newyork": false,
-              "losangeles": false,
-              "washington": false
+              "New York": false,
+              "Los-Angeles": false,
+              "Washington": false
           }
       }
   },
   {
-    "id": 2,
-    "name": "Product Name",
-    "email": "user2@yandex.ru",
-    "count": 10,
-    "price": 7.91,
-    "delivery": {
-      "belarus": {
-        "borisov": false,
-        "brest": false,
-        "minsk": true
-      },
-      "russia": {
-        "bryansk": false,
-        "moskow": true,
-        "saratov": false
-      },
-      "usa": {
-        "newyork": true,
-        "losangeles": false,
-        "washington": false
+      "id": 2,
+      "name": "Product Name",
+      "email": "user2@yandex.ru",
+      "count": 10,
+      "price": 7.91,
+      "delivery": {
+          "belarus": {
+              "Borisov": false,
+              "Brest": false,
+              "Minsk": true
+          },
+          "russia": {
+              "Bryansk": false,
+              "Moskow": true,
+              "Saratov": false
+          },
+          "usa": {
+              "New York": true,
+              "los-Angeles": false,
+              "Washington": false
+          }
       }
-    }
   },
   {
-    "id": 3,
-    "name": "Another Product",
-    "email": "user3@yandex.ru",
-    "count": 7,
-    "price": 77.88,
-    "delivery": {
-      "belarus": {
-        "borisov": false,
-        "brest": false,
-        "minsk": true
-      },
-      "russia": {
-        "bryansk": false,
-        "moskow": true,
-        "saratov": false
-      },
-      "usa": {
-        "newyork": true,
-        "losangeles": false,
-        "washington": false
+      "id": 3,
+      "name": "Another Product",
+      "email": "user3@yandex.ru",
+      "count": 7,
+      "price": 77.88,
+      "delivery": {
+          "belarus": {
+              "Borisov": false,
+              "Brest": false,
+              "Minsk": true
+          },
+          "russia": {
+              "Bryansk": false,
+              "Moskow": true,
+              "Saratov": false
+          },
+          "usa": {
+              "New York": true,
+              "Los-Angeles": false,
+              "Washington": false
+          }
       }
-    }
   }
 ]
