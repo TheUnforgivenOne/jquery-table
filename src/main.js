@@ -117,21 +117,36 @@ const sortHandler = (event) => {
 
 const renderTableHead = () => {
     const tableHead = $('#tableHead');
+    const arrow = data.sortOrder === 'asc' ? '&#9660;' : '&#9650;';
 
     $(tableHead).empty();
     $(tableHead).append(
         $('<tr>').append(
             $('<th>').append(
-                $('<a>')
-                    .text('Name')
-                    .attr({ 'href': '#' })
-                    .click({ 'column': 'name' }, sortHandler)
+                $('<div>')
+                    .attr({ 'class': 'd-flex justify-content-between' })
+                    .append(
+                        $('<a>')
+                            .text('Name')
+                            .attr({ 'href': '#' })
+                            .click({ 'column': 'name' }, sortHandler),
+                        $('<div>')
+                            .attr({ 'id': 'nameArrow' })
+                            .html(data.sortBy === 'name' ? arrow : '')
+                    )
             ),
             $('<th>').append(
-                $('<a>')
-                    .text('Price')
-                    .attr({ 'href': '#' })
-                    .click({ 'column': 'price' }, sortHandler)
+                $('<div>')
+                    .attr({ 'class': 'd-flex justify-content-between' })
+                    .append(
+                        $('<a>')
+                            .text('Price')
+                            .attr({ 'href': '#' })
+                            .click({ 'column': 'price' }, sortHandler),
+                        $('<div>')
+                            .attr({ 'id': 'priceArrow' })
+                            .html(data.sortBy === 'price' ? arrow : '')
+                    )
             ),
             $('<th>').text('Actions')
         )
