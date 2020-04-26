@@ -2,6 +2,7 @@ const data = {
     products: [],
     sortBy: 'name',
     sortOrder: 'asc',
+    search: ''
 };
 
 const defaultProduct = {
@@ -30,6 +31,8 @@ const defaultProduct = {
 };
 
 const initEvents = () => {
+    $('#searchInput').unbind().on('keypress', (key => key.which === 13 ? searchHandler: null));
+    $('#searchButton').unbind().click(searchHandler);
     $('#addNewButton').unbind().click({ 'product': defaultProduct }, renderEditModal);
 };
 
@@ -44,6 +47,12 @@ const loadProducts = () => {
             render();
         }
     });
+};
+
+const searchHandler = () => {
+    const searchString = $('#searchInput').val();
+    data.search = searchString.trim().toLowerCase();
+    renderTableBody();
 };
 
 const uniqueId = () => {
@@ -66,7 +75,6 @@ const editProduct = (event) => {
     if (event.data.product.id == null) {
         product = _.clone(defaultProduct);
         product.id = uniqueId();
-        console.log(product);
         data.products.push(product);
     } else {
         product = event.data.product;
@@ -132,9 +140,14 @@ const renderTableHead = () => {
 
 const renderTableBody = () => {
     const tableBody = $('#tableBody');
-    const { products, sortBy, sortOrder } = data;
-    const sortedProducts = _.orderBy(products, sortBy, sortOrder);
-    // console.log(products);
+    const { products, sortBy, sortOrder, search } = data;
+    let searchedProducts;
+    if (search === ''){
+        searchedProducts = products;
+    } else {
+        searchedProducts = products.filter((product) => product.name.trim().toLowerCase().includes(search));
+    }
+    const sortedProducts = _.orderBy(searchedProducts, sortBy, sortOrder);
 
     $(tableBody).empty();
     sortedProducts.forEach((product) => {
