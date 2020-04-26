@@ -4,6 +4,35 @@ const data = {
     sortOrder: 'asc',
 };
 
+const defaultProduct = {
+    "id": null,
+    "name": "New Product",
+    "email": null,
+    "count": null,
+    "price": null,
+    "delivery": {
+        "belarus": {
+            "Borisov": false,
+            "Brest": false,
+            "Minsk": false
+        },
+        "russia": {
+            "Bryansk": false,
+            "Moskow": false,
+            "Saratov": false
+        },
+        "usa": {
+            "New York": false,
+            "Los-Angeles": false,
+            "Washington": false
+        }
+    }
+};
+
+const initEvents = () => {
+    $('#addNewButton').unbind().click({ 'product': defaultProduct }, renderEditModal);
+};
+
 const loadProducts = () => {
     const url = './products.json';
 
@@ -17,8 +46,31 @@ const loadProducts = () => {
     });
 };
 
+const uniqueId = () => {
+    const { products } = data;
+    let id = 1;
+    let idList = [];
+
+    for (product of products) {
+        idList.push(product.id);
+    }
+    while (idList.indexOf(id) !== -1) {
+        id++;
+    }
+
+    return id;
+};
+
 const editProduct = (event) => {
-    const { product } = event.data;
+    let product;
+    if (event.data.product.id == null) {
+        product = _.clone(defaultProduct);
+        product.id = uniqueId();
+        console.log(product);
+        data.products.push(product);
+    } else {
+        product = event.data.product;
+    }
 
     product.name = $('#productName').val();
     product.email = $('#supplierEmail').val();
@@ -82,6 +134,7 @@ const renderTableBody = () => {
     const tableBody = $('#tableBody');
     const { products, sortBy, sortOrder } = data;
     const sortedProducts = _.orderBy(products, sortBy, sortOrder);
+    // console.log(products);
 
     $(tableBody).empty();
     sortedProducts.forEach((product) => {
@@ -190,3 +243,4 @@ const render = () => {
 };
 
 loadProducts();
+initEvents();
