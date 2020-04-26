@@ -97,7 +97,6 @@ const editProduct = (event) => {
     if (event.data.product.id == null) {
         product = _.clone(defaultProduct);
         product.id = uniqueId();
-        data.products.push(product);
     } else {
         product = event.data.product;
     }
@@ -108,8 +107,11 @@ const editProduct = (event) => {
     product.price = $('#productPrice').val();
 
     if (validateProduct(product)){
+        data.products.push(product);
         $('#modalEdit, #modalFade').hide();
         renderTableBody();
+    } else {
+        alert('You have incorrect fields');
     }
 };
 
