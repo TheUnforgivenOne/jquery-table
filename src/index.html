@@ -7,72 +7,111 @@
     <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Main page -->
-        <div class="d-flex justify-content-center my-3">
-            <input type="text" id="searchInput" value="Enter product name..." class="form-control w-25">
-            <input type="button" id="searchButton" value="Search" class="btn btn-outline-secondary mx-2">
-            <input type="button" id="addNewButton" value="Add new" class="btn btn-outline-secondary ml-auto">
-        </div>
-        <table class="table table-bordered">
-            <thead id="tableHead">
-
-            </thead>
-            <tbody id="tableBody">
-
-            </tbody>
-        </table>
-        <!-- Modal background -->
-        <div id="modalFade" class="modalFade">
-            <!-- Modal delete window -->
-            <div id="modalDelete" class="modalDelete">
-                <div class="modalHeader">Are you sure?<hr/></div>
-                <div id="modalDeleteBody" class="modalBody">
-
-                </div>
-                <div>
-                    <input type="button" value="Yes" id="acceptDeletionButton" class="btn btn-outline-primary">
-                    <input type="button" value="No" id="rejectDeletionButton" class="btn btn-outline-primary">
-                </div>
+<!-- Main page -->
+<div class="container">
+    <div class="d-flex justify-content-center my-3">
+        <input type="text" id="searchInput" value="Enter product name..." class="form-control w-25">
+        <input type="button" id="searchButton" value="Search" class="btn btn-outline-secondary mx-2">
+        <input type="button" id="addNewButton" value="Add new" class="btn btn-outline-secondary ml-auto">
+    </div>
+    <table class="table table-bordered">
+        <thead id="tableHead"></thead>
+        <script type="text/template" id="tableHeadTemplate">
+            <tr>
+                <th>
+                    <div class="d-flex justify-content-between">
+                        <a href="#" id="nameHandler">Name</a>
+                        <div><%= sortBy == 'name' ? arrow  : '' %></div>
+                    </div>
+                </th>
+                <th>
+                    <div class="d-flex justify-content-between">
+                        <a href="#" id="priceHandler">Price</a>
+                        <div><%= sortBy == 'price' ? arrow  : '' %></div>
+                    </div>
+                </th>
+                <th>
+                    <div>Actions</div>
+                </th>
+            </tr>
+        </script>
+        <tbody id="tableBody"></tbody>
+        <script type="text/template" id="tableBodyTemplate">
+            <% products.forEach((product) => { %>
+            <tr>
+                <td>
+                    <div class="d-flex justify-content-between">
+                        <a id="product<%=product.id%>EditLink" href="#"><%= product.name %></a>
+                        <div><%= product.count %></div>
+                    </div>
+                </td>
+                <td>
+                    <div><%= product.price %></div>
+                </td>
+                <td>
+                    <div class="d-flex justify-content-around">
+                        <input type="button" id="product<%=product.id%>EditButton" value="Edit" class="btn btn-outline-secondary">
+                        <input type="button" id="product<%=product.id%>DeleteButton" value="Delete" class="btn btn-outline-secondary">
+                    </div>
+                </td>
+            </tr>
+            <% }); %>
+        </script>
+    </table>
+    <!-- Modal background -->
+    <div id="modalFade" class="modalFade">
+        <!-- Modal delete window -->
+        <div id="modalDelete" class="modalDelete">
+            <div class="modalHeader">Are you sure?
+                <hr/>
             </div>
-            <!-- Modal edit window -->
-            <div id="modalEdit" class="modalEdit">
-                <div id="modalEditHeader" class="modalHeader"></div><hr/>
-                <div class="modalEditBody">
-                    <div class="d-flex flex-column">
-                        <label for="productName">Name:</label>
-                        <input type="text" id="productName" class="w-50">
-                    </div>
-                    <div class="d-flex flex-column">
-                        <label for="supplierEmail">Supplier email:</label>
-                        <input type="text" id="supplierEmail" class="w-50">
-                    </div>
-                    <div class="d-flex flex-column">
-                        <label for="productCount">Count:</label>
-                        <input type="text" id="productCount" class="w-50">
-                    </div>
-                    <div class="d-flex flex-column">
-                        <label for="productPrice">Price:</label>
-                        <input type="text" id="productPrice" class="w-50">
-                    </div>
-                    <span>Delivery:</span>
-                    <div class="d-flex">
-                        <select id="country" class="h-25">
+            <div id="modalDeleteBody" class="modalBody">
 
-                        </select>
-                        <div id="cities" class="d-flex flex-column border ml-5 w-25">
-
-                        </div>
-                    </div>
-                    <input type="button" value="Save changes" id="acceptEdit" class="btn btn-outline-primary">
-                    <input type="button" value="Cancel" id="rejectEdit" class="btn btn-outline-primary">
+            </div>
+            <div>
+                <input type="button" value="Yes" id="acceptDeletionButton" class="btn btn-outline-primary">
+                <input type="button" value="No" id="rejectDeletionButton" class="btn btn-outline-primary">
+            </div>
+        </div>
+        <!-- Modal edit window -->
+        <div id="modalEdit" class="modalEdit">
+            <div id="modalEditHeader" class="modalHeader"></div>
+            <hr/>
+            <div class="modalEditBody">
+                <div class="d-flex flex-column">
+                    <label for="productName">Name:</label>
+                    <input type="text" id="productName" class="w-50">
                 </div>
+                <div class="d-flex flex-column">
+                    <label for="supplierEmail">Supplier email:</label>
+                    <input type="text" id="supplierEmail" class="w-50">
+                </div>
+                <div class="d-flex flex-column">
+                    <label for="productCount">Count:</label>
+                    <input type="text" id="productCount" class="w-50">
+                </div>
+                <div class="d-flex flex-column">
+                    <label for="productPrice">Price:</label>
+                    <input type="text" id="productPrice" class="w-50">
+                </div>
+                <span>Delivery:</span>
+                <div class="d-flex">
+                    <select id="country" class="h-25">
+
+                    </select>
+                    <div id="cities" class="d-flex flex-column border ml-5 w-25">
+
+                    </div>
+                </div>
+                <input type="button" value="Save changes" id="acceptEdit" class="btn btn-outline-primary">
+                <input type="button" value="Cancel" id="rejectEdit" class="btn btn-outline-primary">
             </div>
         </div>
     </div>
+</div>
 
-    <script src="scripts/plugins/jquery.js"></script>
-    <script src="scripts/plugins/lodash.js"></script>
-    <script src="scripts/main.js"></script>
+<script src="scripts/plugins/jquery.js"></script>
+<script src="scripts/plugins/lodash.js"></script>
+<script src="scripts/main.js"></script>
 </body>
 </html>

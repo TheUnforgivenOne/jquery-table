@@ -44,7 +44,7 @@ const loadProducts = () => {
         url: url,
         success: (resp) => {
             data.products = resp;
-            render();
+            renderTable();
         }
     });
 };
@@ -132,97 +132,47 @@ const toggleSortOrder = () => {
 };
 
 const sortHandler = (event) => {
-    if (data.sortBy === event.data.column) {
+    const { column } = event.data;
+    const { sortBy } = data;
+
+    if (sortBy === column) {
         toggleSortOrder();
     } else {
         data.sortOrder = 'asc';
         toggleSortBy();
     }
-    render();
+    renderTable();
 };
 
 const renderTableHead = () => {
-    const tableHead = $('#tableHead');
-    const arrow = data.sortOrder === 'asc' ? '&#9660;' : '&#9650;';
+    const { sortBy, sortOrder } = data;
+    const arrow = sortOrder === 'asc' ? '&#9660;' : '&#9650;';
 
-    $(tableHead).empty();
-    $(tableHead).append(
-        $('<tr>').append(
-            $('<th>').append(
-                $('<div>')
-                    .attr({ 'class': 'd-flex justify-content-between' })
-                    .append(
-                        $('<a>')
-                            .text('Name')
-                            .attr({ 'href': '#' })
-                            .click({ 'column': 'name' }, sortHandler),
-                        $('<div>')
-                            .attr({ 'id': 'nameArrow' })
-                            .html(data.sortBy === 'name' ? arrow : '')
-                    )
-            ),
-            $('<th>').append(
-                $('<div>')
-                    .attr({ 'class': 'd-flex justify-content-between' })
-                    .append(
-                        $('<a>')
-                            .text('Price')
-                            .attr({ 'href': '#' })
-                            .click({ 'column': 'price' }, sortHandler),
-                        $('<div>')
-                            .attr({ 'id': 'priceArrow' })
-                            .html(data.sortBy === 'price' ? arrow : '')
-                    )
-            ),
-            $('<th>').text('Actions')
-        )
-    )
+    const tmpl = _.template($('#tableHeadTemplate').html());
+
+    $('#tableHead').html(tmpl({
+        sortBy,
+        arrow
+    }));
+    $('#nameHandler').click({ 'column': 'name' }, sortHandler);
+    $('#priceHandler').click({ 'column': 'price' }, sortHandler);
 };
 
 const renderTableBody = () => {
-    const tableBody = $('#tableBody');
     const { products, sortBy, sortOrder, search } = data;
-    let searchedProducts;
-    if (search === ''){
-        searchedProducts = products;
-    } else {
-        searchedProducts = products.filter((product) => product.name.trim().toLowerCase().includes(search));
-    }
-    const sortedProducts = _.orderBy(searchedProducts, sortBy, sortOrder);
+    const sortedProducts = _.orderBy(products, sortBy, sortOrder);
+    const searchedProducts = sortedProducts.filter((product) => product.name.trim().toLowerCase().includes(search));
 
-    $(tableBody).empty();
-    sortedProducts.forEach((product) => {
-        $(tableBody).append(
-            $('<tr>'),
-            $('<td>').append(
-                $('<div>')
-                    .attr({ 'class': 'd-flex justify-content-between' })
-                    .append(
-                        $('<a>')
-                            .text(product.name)
-                            .attr({ 'href': '#' })
-                            .click({ 'product': product }, renderEditModal),
-                        $('<span>')
-                            .text(product.count)
-                            .attr({})
-                    )
-            ),
-            $('<td>').text(Number(product.price)),
-            $('<td>')
-                .attr({ 'class': 'd-flex justify-content-around' })
-                .append(
-                    $('<button>')
-                        .text('Edit')
-                        .attr({ 'class': 'btn btn-outline-secondary' })
-                        .click({ 'product': product }, renderEditModal),
-                    $('<button>')
-                        .text('Delete')
-                        .attr({ 'class': 'btn btn-outline-secondary' })
-                        .click({ 'product': product }, renderDeleteModal)
-                )
-            )
-        }
-    )
+    const tmpl = _.template($('#tableBodyTemplate').html());
+
+    $('#tableBody').html(tmpl({
+        products: searchedProducts
+    }));
+    products.forEach((product) => {
+        $('#product' + product.id + 'EditLink').click({ product }, renderEditModal);
+        $('#product' + product.id + 'EditButton').click({ product }, renderEditModal);
+        $('#product' + product.id + 'DeleteButton').click({ product }, renderDeleteModal);
+    });
 };
 
 const renderCities = (event) => {
@@ -291,7 +241,7 @@ const renderDeleteModal = (event) => {
     });
 };
 
-const render = () => {
+const renderTable = () => {
     renderTableHead();
     renderTableBody();
 };
