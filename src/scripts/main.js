@@ -49,6 +49,10 @@ const loadProducts = () => {
     });
 };
 
+const closeModals = () => {
+    $('#modalDelete, #modalEdit, #modalFade').hide();
+};
+
 const searchHandler = () => {
     const searchString = $('#searchInput').val();
     data.search = searchString.trim().toLowerCase();
@@ -106,13 +110,16 @@ const editProduct = (event) => {
     product.count = $('#productCount').val();
     product.price = $('#productPrice').val();
 
-    if (validateProduct(product)){
-        data.products.push(product);
-        $('#modalEdit, #modalFade').hide();
-        renderTableBody();
-    } else {
-        alert('You have incorrect fields');
-    }
+    data.products.push(product);
+    $('#modalEdit, #modalFade').hide();
+    renderTableBody();
+    // if (validateProduct(product)){
+    //     data.products.push(product);
+    //     $('#modalEdit, #modalFade').hide();
+    //     renderTableBody();
+    // } else {
+    //     alert('You have incorrect fields');
+    // }
 };
 
 const deleteProduct = (event) => {
@@ -175,75 +182,46 @@ const renderTableBody = () => {
     });
 };
 
-const renderCities = (event) => {
-    const { product } = event.data;
-    const selectedCountry = $('#country').val();
-    const cities = product.delivery[selectedCountry];
-
-    $('#cities').empty().append(
-        $('<div>').append(
-            $('<input>')
-                .attr({ 'type': 'checkbox', 'id': 'selectAll', 'class': 'm-1' }),
-            $('<label>')
-                .text('Select all')
-                .attr({ 'for': 'selectAll', 'class': 'm-1' })
-        )
-    );
-    for (city in cities) {
-        $('#cities').append(
-            $('<div>').append(
-                $('<input>')
-                    .attr({ 'type': 'checkbox', 'id': city, 'checked': cities[city], 'class': 'm-1' }),
-                $('<label>')
-                    .text(city)
-                    .attr({ 'for': city, 'class': 'm-1' })
-            )
-        )
-    }
-
-};
-
-const renderEditModal = (event) => {
-    const { product } = event.data;
-
-    $('#modalEditHeader').text(product.name);
-    $('#productName').val(product.name);
-    $('#supplierEmail').val(product.email);
-    $('#productCount').val(product.count);
-    $('#productPrice').val(product.price);
-    $('#country').empty().append(
-        $('<option>')
-            .text('Belarus')
-            .attr({ 'value': 'belarus' }),
-        $('<option>')
-            .text('Russia')
-            .attr({ 'value': 'russia', 'selected': 'selected' }),
-        $('<option>')
-            .text('USA')
-            .attr({ 'value': 'usa' }),
-    ).on('change', { 'product': product }, renderCities);
-    renderCities( { data: { 'product': product } }, $('#country').val());
-    $("#acceptEdit").unbind().click({ 'product': product }, editProduct);
-    $('#rejectEdit').unbind().click(() => {
-        $('#modalEdit, #modalFade').hide();
-    });
-    $('#modalEdit, #modalFade').show();
+const renderTable = () => {
+    renderTableHead();
+    renderTableBody();
 };
 
 const renderDeleteModal = (event) => {
     const { product } = event.data;
 
-    $('#modalDeleteBody').text('Are you sure you want to delete ' + product.name + '?');
+    const tmpl = _.template($('#modalDeleteTemplate').html());
+
+    $('#modalDelete').html(tmpl({
+        product
+    }));
+    $('#acceptDeletionButton').click({ 'productId': product.id }, deleteProduct);
+    $('#rejectDeletionButton').click(closeModals);
     $('#modalDelete, #modalFade').show();
-    $('#acceptDeletionButton').unbind().click({'productId': product.id}, deleteProduct);
-    $('#rejectDeletionButton').unbind().click(() => {
-        $('#modalDelete, #modalFade').hide();
-    });
 };
 
-const renderTable = () => {
-    renderTableHead();
-    renderTableBody();
+const hideCountyCheckBoxGroups = (product) => {
+    for (country in product.delivery){
+        $('#' + country + 'CheckBoxGroup').hide();
+    }
+};
+
+const renderEditModal = (event) => {
+    const { product } = event.data;
+
+    const tmpl = _.template($('#modalEditTemplate').html());
+
+    $('#modalEdit').html(tmpl({
+        product
+    }));
+    hideCountyCheckBoxGroups(product);
+    $('#countrySelect').change(() => {
+        hideCountyCheckBoxGroups(product);
+        $('#' + $('#countrySelect').children(":selected").val() + 'CheckBoxGroup').show();
+    });
+    $("#acceptEdit").click({ product }, editProduct);
+    $('#rejectEdit').click(closeModals);
+    $('#modalEdit, #modalFade').show();
 };
 
 $(document).ready(() =>{

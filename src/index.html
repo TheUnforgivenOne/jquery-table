@@ -9,11 +9,13 @@
 <body>
 <!-- Main page -->
 <div class="container">
+    <!-- Page utils -->
     <div class="d-flex justify-content-center my-3">
-        <input type="text" id="searchInput" value="Enter product name..." class="form-control w-25">
+        <input type="text" id="searchInput" placeholder="Enter product name..." class="form-control w-25">
         <input type="button" id="searchButton" value="Search" class="btn btn-outline-secondary mx-2">
         <input type="button" id="addNewButton" value="Add new" class="btn btn-outline-secondary ml-auto">
     </div>
+    <!-- Main table -->
     <table class="table table-bordered">
         <thead id="tableHead"></thead>
         <script type="text/template" id="tableHeadTemplate">
@@ -61,39 +63,58 @@
     <!-- Modal background -->
     <div id="modalFade" class="modalFade">
         <!-- Modal delete window -->
-        <div id="modalDelete" class="modalDelete">
-            <div class="modalHeader">Are you sure?
-                <hr/>
-            </div>
+        <div id="modalDelete" class="modalDelete"></div>
+        <script type="text/template" id="modalDeleteTemplate">
+            <div class="modalHeader">Are you sure?<hr/></div>
             <div id="modalDeleteBody" class="modalBody">
-
+                Are you sure you want to delete <%= product.name %>
             </div>
-            <div>
-                <input type="button" value="Yes" id="acceptDeletionButton" class="btn btn-outline-primary">
-                <input type="button" value="No" id="rejectDeletionButton" class="btn btn-outline-primary">
+            <div class="d-flex justify-content-center">
+                <input type="button" id="acceptDeletionButton" value="Yes" class="btn btn-outline-primary">
+                <input type="button" id="rejectDeletionButton" value="No" class="btn btn-outline-primary">
             </div>
-        </div>
+        </script>
         <!-- Modal edit window -->
-        <div id="modalEdit" class="modalEdit">
-            <div id="modalEditHeader" class="modalHeader"></div>
-            <hr/>
+        <div id="modalEdit" class="modalEdit"></div>
+        <script type="text/template" id="modalEditTemplate">
+            <div id="modalEditHeader" class="modalHeader"><%= product.name %><hr/></div>
             <div class="modalEditBody">
                 <div class="d-flex flex-column">
-                    <label for="productName">Name:</label>
-                    <input type="text" id="productName" class="w-50">
+                    <label for="product<%=product.id%>Name">Name:</label>
+                    <input type="text" id="product<%=product.id%>Name" value="<%= product.name %>" class="w-50">
                 </div>
                 <div class="d-flex flex-column">
-                    <label for="supplierEmail">Supplier email:</label>
-                    <input type="text" id="supplierEmail" class="w-50">
+                    <label for="supplierEmail<%=product.id%>">Supplier email:</label>
+                    <input type="text" id="supplierEmail<%=product.id%>" value="<%= product.email %>" class="w-50">
                 </div>
                 <div class="d-flex flex-column">
-                    <label for="productCount">Count:</label>
-                    <input type="text" id="productCount" class="w-50">
+                    <label for="product<%=product.id%>Count">Count:</label>
+                    <input type="text" id="product<%=product.id%>Count" value="<%= product.count %>" class="w-50">
                 </div>
                 <div class="d-flex flex-column">
-                    <label for="productPrice">Price:</label>
-                    <input type="text" id="productPrice" class="w-50">
+                    <label for="product<%=product.id%>Price">Price:</label>
+                    <input type="text" id="product<%=product.id%>Price" value="<%= product.price %>" class="w-50">
                 </div>
+                <span>Delivery:</span>
+                <div class="d-flex">
+                    <select id="countrySelect">
+                        <option id="defaultOption" selected="selected"></option>
+                        <% for (country in product.delivery) { %>
+                            <option id="<%= country %>Option"><%= country %></option>
+                        <% } %>
+                    </select>
+                    <div>
+                        <% for (country in product.delivery) { %>
+                        <div id="<%= country %>CheckBoxGroup" name="checkBoxGroup">
+                            <% for (city in product.delivery[country]) { %>
+                                <input type="checkbox" id="<%= city %>CheckBox">
+                                <label for="<%= city %>CheckBox"><%= city %></label>
+                            <% } %>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+                <!--
                 <span>Delivery:</span>
                 <div class="d-flex">
                     <select id="country" class="h-25">
@@ -103,10 +124,13 @@
 
                     </div>
                 </div>
-                <input type="button" value="Save changes" id="acceptEdit" class="btn btn-outline-primary">
-                <input type="button" value="Cancel" id="rejectEdit" class="btn btn-outline-primary">
+                -->
+                <div>
+                    <input type="button" value="Save changes" id="acceptEdit" class="btn btn-outline-primary">
+                    <input type="button" value="Cancel" id="rejectEdit" class="btn btn-outline-primary">
+                </div>
             </div>
-        </div>
+        </script>
     </div>
 </div>
 
