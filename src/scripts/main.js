@@ -30,10 +30,10 @@ const defaultProduct = {
     }
 };
 
-const initEvents = () => {
-    $('#searchInput').unbind().on('keypress', key => key.which === 13 ? searchHandler() : null);
-    $('#searchButton').unbind().click(searchHandler);
-    $('#addNewButton').unbind().click({ 'product': defaultProduct }, renderEditModal);
+const initDefaultEvents = () => {
+    $('#searchInput').keypress((event) => event.keyCode === 13 ? searchHandler() : null);
+    $('#searchButton').click(searchHandler);
+    $('#addNewButton').click({ 'product': defaultProduct }, renderEditModal);
 };
 
 const loadProducts = () => {
@@ -51,12 +51,6 @@ const loadProducts = () => {
 
 const closeModals = () => {
     $('#modalDelete, #modalEdit, #modalFade').hide();
-};
-
-const searchHandler = () => {
-    const searchString = $('#searchInput').val();
-    data.search = searchString.trim().toLowerCase();
-    renderTableBody();
 };
 
 const uniqueId = () => {
@@ -111,7 +105,8 @@ const editProduct = (event) => {
     product.price = $('#productPrice').val();
 
     data.products.push(product);
-    $('#modalEdit, #modalFade').hide();
+
+    closeModals();
     renderTableBody();
     // if (validateProduct(product)){
     //     data.products.push(product);
@@ -126,7 +121,14 @@ const deleteProduct = (event) => {
     const { productId } = event.data;
 
     data.products.splice(data.products.findIndex(p => p.id === productId), 1);
-    $('#modalDelete, #modalFade').hide();
+
+    closeModals();
+    renderTableBody();
+};
+
+const searchHandler = () => {
+    const searchString = $('#searchInput').val();
+    data.search = searchString.trim().toLowerCase();
     renderTableBody();
 };
 
@@ -161,19 +163,24 @@ const renderTableHead = () => {
         sortBy,
         arrow
     }));
-    $('#nameHandler').click({ 'column': 'name' }, sortHandler);
-    $('#priceHandler').click({ 'column': 'price' }, sortHandler);
+    $('#nameColumn').click({ 'column': 'name' }, sortHandler);
+    $('#priceColumn').click({ 'column': 'price' }, sortHandler);
 };
 
 const renderTableBody = () => {
     const { products, sortBy, sortOrder, search } = data;
-    const sortedProducts = _.orderBy(products, sortBy, sortOrder);
-    const searchedProducts = sortedProducts.filter((product) => product.name.trim().toLowerCase().includes(search));
+    let searchedProducts;
+    if (search !== ''){
+        searchedProducts = products.filter((product) => product.name.trim().toLowerCase().includes(search));
+    } else {
+        searchedProducts = products;
+    }
+    const sortedProducts = _.orderBy(searchedProducts, sortBy, sortOrder);
 
     const tmpl = _.template($('#tableBodyTemplate').html());
 
     $('#tableBody').html(tmpl({
-        products: searchedProducts
+        products: sortedProducts
     }));
     products.forEach((product) => {
         $('#product' + product.id + 'EditLink').click({ product }, renderEditModal);
@@ -225,6 +232,6 @@ const renderEditModal = (event) => {
 };
 
 $(document).ready(() =>{
-    initEvents();
+    initDefaultEvents();
     loadProducts();
 });

@@ -22,13 +22,13 @@
             <tr>
                 <th>
                     <div class="d-flex justify-content-between">
-                        <a href="#" id="nameHandler">Name</a>
+                        <a href="#" id="nameColumn">Name</a>
                         <div><%= sortBy == 'name' ? arrow  : '' %></div>
                     </div>
                 </th>
                 <th>
                     <div class="d-flex justify-content-between">
-                        <a href="#" id="priceHandler">Price</a>
+                        <a href="#" id="priceColumn">Price</a>
                         <div><%= sortBy == 'price' ? arrow  : '' %></div>
                     </div>
                 </th>
@@ -95,36 +95,31 @@
                     <label for="product<%=product.id%>Price">Price:</label>
                     <input type="text" id="product<%=product.id%>Price" value="<%= product.price %>" class="w-50">
                 </div>
-                <span>Delivery:</span>
-                <div class="d-flex">
-                    <select id="countrySelect">
+                <div class="d-flex flex-row flex-wrap">
+                    <label for="countrySelect" class="w-100">Delivery:</label>
+                    <select id="countrySelect" class="h-25">
                         <option id="defaultOption" selected="selected"></option>
                         <% for (country in product.delivery) { %>
                             <option id="<%= country %>Option"><%= country %></option>
                         <% } %>
                     </select>
-                    <div>
+                    <div class="d-flex flex-column">
                         <% for (country in product.delivery) { %>
-                        <div id="<%= country %>CheckBoxGroup" name="checkBoxGroup">
+                        <div id="<%= country %>CheckBoxGroup">
+                            <div>
+                                <input type="checkbox" id="selectAllCheckBox">
+                                <label for="selectAllCheckBox">Select all</label>
+                            </div>
                             <% for (city in product.delivery[country]) { %>
-                                <input type="checkbox" id="<%= city %>CheckBox">
-                                <label for="<%= city %>CheckBox"><%= city %></label>
+                                <div>
+                                    <input type="checkbox" id="<%= city %>CheckBox">
+                                    <label for="<%= city %>CheckBox"><%= city %></label>
+                                </div>
                             <% } %>
                         </div>
                         <% } %>
                     </div>
                 </div>
-                <!--
-                <span>Delivery:</span>
-                <div class="d-flex">
-                    <select id="country" class="h-25">
-
-                    </select>
-                    <div id="cities" class="d-flex flex-column border ml-5 w-25">
-
-                    </div>
-                </div>
-                -->
                 <div>
                     <input type="button" value="Save changes" id="acceptEdit" class="btn btn-outline-primary">
                     <input type="button" value="Cancel" id="rejectEdit" class="btn btn-outline-primary">
