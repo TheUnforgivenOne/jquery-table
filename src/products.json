@@ -17,7 +17,7 @@
               "Saratov": true
           },
           "usa": {
-              "New York": false,
+              "New-York": false,
               "Los-Angeles": false,
               "Washington": false
           }
@@ -41,7 +41,7 @@
               "Saratov": false
           },
           "usa": {
-              "New York": true,
+              "New-York": true,
               "los-Angeles": false,
               "Washington": false
           }
@@ -65,7 +65,7 @@
               "Saratov": false
           },
           "usa": {
-              "New York": true,
+              "New-York": true,
               "Los-Angeles": false,
               "Washington": false
           }

@@ -105,10 +105,10 @@
                     </select>
                     <div class="d-flex flex-column">
                         <% for (country in product.delivery) { %>
-                        <div id="<%= country %>CheckBoxGroup">
+                        <div id="<%= country %>">
                             <div>
-                                <input type="checkbox" id="selectAllCheckBox">
-                                <label for="selectAllCheckBox">Select all</label>
+                                <input type="checkbox" id="<%= country %>SelectAllCities">
+                                <label for="<%= country %>SelectAllCities">Select all</label>
                             </div>
                             <% for (city in product.delivery[country]) { %>
                                 <div>

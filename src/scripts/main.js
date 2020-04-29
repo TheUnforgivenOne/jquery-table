@@ -95,16 +95,24 @@ const editProduct = (event) => {
     if (event.data.product.id == null) {
         product = _.clone(defaultProduct);
         product.id = uniqueId();
+        product.name = $('#productName').val();
+        product.email = $('#supplierEmail').val();
+        product.count = $('#productCount').val();
+        product.price = $('#productPrice').val();
+        data.products.push(product);
     } else {
         product = event.data.product;
+        product.name = $('#product' + product.id + 'Name').val();
+        product.email = $('#supplierEmail' + product.id).val();
+        product.count = $('#product' + product.id + 'Count').val();
+        product.price = $('#product' + product.id + 'Price').val();
     }
 
-    product.name = $('#productName').val();
-    product.email = $('#supplierEmail').val();
-    product.count = $('#productCount').val();
-    product.price = $('#productPrice').val();
-
-    data.products.push(product);
+    for (country in product.delivery){
+        for (city in product.delivery[country]){
+            product.delivery[country][city] = $('#' + city + 'CheckBox').is(':checked');
+        }
+    }
 
     closeModals();
     renderTableBody();
@@ -207,9 +215,9 @@ const renderDeleteModal = (event) => {
     $('#modalDelete, #modalFade').show();
 };
 
-const hideCountyCheckBoxGroups = (product) => {
+const hideCountryCheckBoxGroups = (product) => {
     for (country in product.delivery){
-        $('#' + country + 'CheckBoxGroup').hide();
+        $('#' + country).hide();
     }
 };
 
@@ -221,10 +229,24 @@ const renderEditModal = (event) => {
     $('#modalEdit').html(tmpl({
         product
     }));
-    hideCountyCheckBoxGroups(product);
+    hideCountryCheckBoxGroups(product);
+    for (country in product.delivery){
+        for (city in product.delivery[country]){
+            $('#' + city + 'CheckBox').prop('checked', product.delivery[country][city]);
+        }
+    }
     $('#countrySelect').change(() => {
-        hideCountyCheckBoxGroups(product);
-        $('#' + $('#countrySelect').children(":selected").val() + 'CheckBoxGroup').show();
+        hideCountryCheckBoxGroups(product);
+        if ($('#countrySelect').children(":selected").val()) {
+            const selectedCountry = $('#countrySelect').children(":selected").val();
+            $('#' + selectedCountry).show();
+            $('#' + selectedCountry + 'SelectAllCities').change({product, selectedCountry}, (event) => {
+                const {product, selectedCountry} = event.data;
+                for (city in product.delivery[selectedCountry]) {
+                    $('#' + city + 'CheckBox').prop('checked', true);
+                }
+            });
+        }
     });
     $("#acceptEdit").click({ product }, editProduct);
     $('#rejectEdit').click(closeModals);
