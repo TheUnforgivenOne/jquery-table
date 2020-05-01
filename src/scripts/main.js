@@ -233,7 +233,7 @@ const renderEditModal = (event) => {
         })
         .focusout(() => {
             const productPriceId = '#product' + product.id + 'Price';
-            if ($(productPriceId).val() !== null) {
+            if ($(productPriceId).val() !== '') {
                 $(productPriceId).val('$' + parseFloat($(productPriceId).val(), 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,').toString());
             }
         });
