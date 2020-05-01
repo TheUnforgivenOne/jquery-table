@@ -6,11 +6,11 @@ const data = {
 };
 
 const defaultProduct = {
-    "id": null,
+    "id": '',
     "name": "New Product",
-    "email": null,
-    "count": null,
-    "price": null,
+    "email": '',
+    "count": '',
+    "price": '',
     "delivery": {
         "belarus": {
             "Borisov": false,
@@ -23,7 +23,7 @@ const defaultProduct = {
             "Saratov": false
         },
         "usa": {
-            "New York": false,
+            "New-York": false,
             "Los-Angeles": false,
             "Washington": false
         }
@@ -68,44 +68,40 @@ const uniqueId = () => {
     return id;
 };
 
-const validateProduct = (product) => {
-    let valid = [];
-    valid.push(/^([a-zA-Z\s]){5,15}$/.test(product.name));
-    valid.push(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(product.email.toLowerCase()));
-    valid.push(product.count > 0);
-    valid.push(product.price > 0);
+const allFieldsCorrect = (product) => {
+    $('#product' + product.id + 'Name').removeClass('invalid');
+    $('#supplierEmail' + product.id).removeClass('invalid');
+    $('#product' + product.id + 'Count').removeClass('invalid');
+    $('#product' + product.id + 'Price').removeClass('invalid');
+};
 
-    valid[0] === false ?
-        $('#productName').addClass('invalid') :
-        $('#productName').removeClass('invalid');
-    valid[1] === false ?
-        $('#supplierEmail').addClass('invalid') :
-        $('#supplierEmail').removeClass('invalid');
-    !valid[2] ?
-        $('#productCount').addClass('invalid') :
-        $('#productCount').removeClass('invalid');
-    !valid[3] ?
-        $('#productPrice').addClass('invalid') :
-        $('#productPrice').removeClass('invalid');
-    return valid.every((e) => e === true);
+const validateProduct = (product) => {
+    let incorrectFields = [];
+    /^([a-zA-Z\s]){5,15}$/.test(product.name) === false ? incorrectFields.push('#product' + product.id + 'Name') : null;
+    /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/.test(product.email) === false ? incorrectFields.push('#supplierEmail' + product.id) : null;
+    (product.count.length === 0) || (Number(product.count) < 0) ? incorrectFields.push('#product' + product.id + 'Count') : null;
+    (product.price === '') || (Number(product.price) < 0) ? incorrectFields.push('#product' + product.id + 'Price') : null;
+
+    return incorrectFields;
 };
 
 const editProduct = (event) => {
     let product;
-    if (event.data.product.id == null) {
+    if (event.data.product.id === '') {
         product = _.clone(defaultProduct);
-        product.id = uniqueId();
-        product.name = $('#productName').val();
-        product.email = $('#supplierEmail').val();
-        product.count = $('#productCount').val();
-        product.price = $('#productPrice').val();
         data.products.push(product);
     } else {
         product = event.data.product;
-        product.name = $('#product' + product.id + 'Name').val();
-        product.email = $('#supplierEmail' + product.id).val();
-        product.count = $('#product' + product.id + 'Count').val();
-        product.price = $('#product' + product.id + 'Price').val();
+    }
+    product.name = $('#product' + product.id + 'Name').val();
+    product.email = $('#supplierEmail' + product.id).val();
+    product.count = $('#product' + product.id + 'Count').val();
+    product.price = $('#product' + product.id + 'Price').val().replace(/[^\d\.]/g, "");
+
+    allFieldsCorrect(product);
+    incorrectFields = validateProduct(product);
+    for (fieldId of incorrectFields) {
+        $(fieldId).addClass('invalid');
     }
 
     for (country in product.delivery){
@@ -114,15 +110,16 @@ const editProduct = (event) => {
         }
     }
 
-    closeModals();
-    renderTableBody();
-    // if (validateProduct(product)){
-    //     data.products.push(product);
-    //     $('#modalEdit, #modalFade').hide();
-    //     renderTableBody();
-    // } else {
-    //     alert('You have incorrect fields');
-    // }
+    if (event.data.product.id === '') {
+        product.id = uniqueId();
+    }
+
+    if (incorrectFields.length === 0){
+        closeModals();
+        renderTableBody();
+    } else {
+        $(incorrectFields[0]).focus();
+    }
 };
 
 const deleteProduct = (event) => {
@@ -229,6 +226,17 @@ const renderEditModal = (event) => {
     $('#modalEdit').html(tmpl({
         product
     }));
+    $('#product' + product.id + 'Price')
+        .focusin(() => {
+            const productPriceId = '#product' + product.id + 'Price';
+            $(productPriceId).val($(productPriceId).val().replace(/[^\d\.]/g, ""));
+        })
+        .focusout(() => {
+            const productPriceId = '#product' + product.id + 'Price';
+            if ($(productPriceId).val() !== null) {
+                $(productPriceId).val('$' + parseFloat($(productPriceId).val(), 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,').toString());
+            }
+        });
     hideCountryCheckBoxGroups(product);
     for (country in product.delivery){
         for (city in product.delivery[country]){
