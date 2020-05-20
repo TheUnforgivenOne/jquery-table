@@ -110,12 +110,17 @@ const editProduct = (event) => {
     }
 
     if (incorrectFields.length === 0){
-        if (event.data.product.id === '') {
-            product.id = uniqueId();
-            data.products.push(product);
-        }
-        closeModals();
-        renderTableBody();
+        const promise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (event.data.product.id === '') {
+                    product.id = uniqueId();
+                    data.products.push(product);
+                }
+                closeModals();
+                renderTableBody();
+                resolve();
+            }, 2000);
+        });
     } else {
         $(incorrectFields[0]).focus();
     }
@@ -124,16 +129,32 @@ const editProduct = (event) => {
 const deleteProduct = (event) => {
     const { productId } = event.data;
 
-    data.products.splice(data.products.findIndex(p => p.id === productId), 1);
+    const promise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            data.products.splice(data.products.findIndex(p => p.id === productId), 1);
+            resolve();
+        }, 2000);
+    });
 
-    closeModals();
-    renderTableBody();
+    promise.then(() => {
+        closeModals();
+        renderTableBody();
+    });
 };
 
 const searchHandler = () => {
     const searchString = $('#searchInput').val();
-    data.search = searchString.trim().toLowerCase();
-    renderTableBody();
+
+    const promise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            data.search = searchString.trim().toLowerCase();
+            resolve();
+        }, 2000);
+    });
+
+    promise.then(() => {
+        renderTableBody();
+    });
 };
 
 const toggleSortBy = () => {
