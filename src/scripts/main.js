@@ -86,43 +86,55 @@ const validateProduct = (product) => {
 };
 
 const editProduct = (event) => {
+    const { readOnly } = event.data;
     let product;
     if (event.data.product.id === '') {
         product = _.clone(defaultProduct);
     } else {
         product = event.data.product;
     }
-    product.name = $('#product' + product.id + 'Name').val();
-    product.email = $('#supplierEmail' + product.id).val();
-    product.count = $('#product' + product.id + 'Count').val();
-    product.price = $('#product' + product.id + 'Price').val().replace(/[^\d\.]/g, "");
 
-    allFieldsCorrect(product);
-    incorrectFields = validateProduct(product);
-    for (fieldId of incorrectFields) {
-        $(fieldId).addClass('invalid');
-    }
+    if (!readOnly) {
+        product.name = $('#product' + product.id + 'Name').val();
+        product.email = $('#supplierEmail' + product.id).val();
+        product.count = $('#product' + product.id + 'Count').val();
+        product.price = $('#product' + product.id + 'Price').val().replace(/[^\d\.]/g, "");
 
-    for (country in product.delivery){
-        for (city in product.delivery[country]){
-            product.delivery[country][city] = $('#' + city + 'CheckBox').is(':checked');
+        allFieldsCorrect(product);
+        incorrectFields = validateProduct(product);
+        for (fieldId of incorrectFields) {
+            $(fieldId).addClass('invalid');
         }
-    }
 
-    if (incorrectFields.length === 0){
+        for (country in product.delivery) {
+            for (city in product.delivery[country]) {
+                product.delivery[country][city] = $('#' + city + 'CheckBox').is(':checked');
+            }
+        }
+
+        if (incorrectFields.length === 0) {
+            const promise = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    if (event.data.product.id === '') {
+                        product.id = uniqueId();
+                        data.products.push(product);
+                    }
+                    closeModals();
+                    renderTableBody();
+                    resolve();
+                }, 2000);
+            });
+        } else {
+            $(incorrectFields[0]).focus();
+        }
+    } else {
         const promise = new Promise((resolve, reject) => {
             setTimeout(() => {
-                if (event.data.product.id === '') {
-                    product.id = uniqueId();
-                    data.products.push(product);
-                }
                 closeModals();
                 renderTableBody();
                 resolve();
             }, 2000);
         });
-    } else {
-        $(incorrectFields[0]).focus();
     }
 };
 
@@ -239,7 +251,7 @@ const hideCountryCheckBoxGroups = (product) => {
 };
 
 const renderEditModal = (event) => {
-    const { product } = event.data;
+    const { product, readOnly } = event.data;
 
     const tmpl = _.template($('#modalEditTemplate').html());
 
@@ -276,7 +288,12 @@ const renderEditModal = (event) => {
             });
         }
     });
-    $("#acceptEdit").click({ product }, editProduct);
+
+    if (readOnly){
+        $('#modalEditFooter').text('Read only. Changes will not be saved.')
+    }
+
+    $("#acceptEdit").click({ product, readOnly }, editProduct);
     $('#rejectEdit').click(closeModals);
     $('#modalEdit, #modalFade').show();
     $(window).scrollTop(0);
