@@ -79,7 +79,7 @@ const validateProduct = (product) => {
     let incorrectFields = [];
     /^([a-zA-Z\s]){5,15}$/.test(product.name) === false ? incorrectFields.push('#product' + product.id + 'Name') : null;
     /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/.test(product.email) === false ? incorrectFields.push('#supplierEmail' + product.id) : null;
-    (product.count.length === 0) || (Number(product.count) < 0) ? incorrectFields.push('#product' + product.id + 'Count') : null;
+    (product.count === '') || (Number(product.count) < 0) || (!Number.isInteger(Number(product.count))) ? incorrectFields.push('#product' + product.id + 'Count') : null;
     (product.price === '') || (Number(product.price) < 0) ? incorrectFields.push('#product' + product.id + 'Price') : null;
 
     return incorrectFields;
@@ -89,7 +89,6 @@ const editProduct = (event) => {
     let product;
     if (event.data.product.id === '') {
         product = _.clone(defaultProduct);
-        data.products.push(product);
     } else {
         product = event.data.product;
     }
@@ -110,11 +109,11 @@ const editProduct = (event) => {
         }
     }
 
-    if (event.data.product.id === '') {
-        product.id = uniqueId();
-    }
-
     if (incorrectFields.length === 0){
+        if (event.data.product.id === '') {
+            product.id = uniqueId();
+            data.products.push(product);
+        }
         closeModals();
         renderTableBody();
     } else {
@@ -188,8 +187,8 @@ const renderTableBody = () => {
         products: sortedProducts
     }));
     products.forEach((product) => {
-        $('#product' + product.id + 'EditLink').click({ product }, renderEditModal);
-        $('#product' + product.id + 'EditButton').click({ product }, renderEditModal);
+        $('#product' + product.id + 'EditLink').click({ product, readOnly: true }, renderEditModal);
+        $('#product' + product.id + 'EditButton').click({ product, readOnly: false }, renderEditModal);
         $('#product' + product.id + 'DeleteButton').click({ product }, renderDeleteModal);
     });
 };
@@ -259,6 +258,7 @@ const renderEditModal = (event) => {
     $("#acceptEdit").click({ product }, editProduct);
     $('#rejectEdit').click(closeModals);
     $('#modalEdit, #modalFade').show();
+    $(window).scrollTop(0);
 };
 
 $(document).ready(() =>{
